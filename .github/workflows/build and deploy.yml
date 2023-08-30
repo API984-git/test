@@ -55,7 +55,7 @@ jobs:
         env:
           nexus_username: ${{ secrets.NEXUS_USERNAME }}
           nexus_password: ${{ secrets.NEXUS_PASSWORD }}
-        run: mvn -B test -f pom.xml -s .maven/settings.xml -Denv=${{vars.MULE_ENV}} -Dkey=${{secrets.SECRET_KEY}}
+        run: mvn -B test -f pom.xml -s settings.xml -Denv=${{vars.MULE_ENV}} -Dkey=${{secrets.SECRET_KEY}}
           
       - name: Dorny Test Report
         if: always()
