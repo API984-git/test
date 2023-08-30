@@ -1,0 +1,124 @@
+# This is a template workflow 
+
+name: Deploy Mule APIs to CloudHub
+
+permissions:
+  contents: read
+  issues: read
+  checks: write
+  pull-requests: write
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push events but only for the qa, main branch
+  pull_request:
+    branches:
+      - dev
+    # Don't trigger the workflow when only workflow file / gitignore / README has the changes
+    paths-ignore: 
+      - '.github/workflows/**'
+      - '.gitignore'
+      - 'README.md'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Test & Build
+    
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    environment: ${{github.ref_name}}
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout this repo
+        uses: actions/checkout@v3
+      
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Setup JDK 1.8
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 8
+          cache: maven
+      
+      - name: Test and Build Jar
+        env:
+          nexus_username: ${{ secrets.NEXUS_USERNAME }}
+          nexus_password: ${{ secrets.NEXUS_PASSWORD }}
+        run: mvn -B test -f pom.xml -s .maven/settings.xml -Denv=${{vars.MULE_ENV}} -Dkey=${{secrets.SECRET_KEY}}
+          
+      - name: Dorny Test Report
+        if: always()
+        id: dorny_summary
+        uses: dorny/test-reporter@v1
+        with:
+          name: Test Summary
+          path:  target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: 'true'
+          
+      - name: Add Tests summary
+        if: always()
+        env:
+          passed: ${{ steps.dorny_summary.outputs.passed }}
+          failed: ${{ steps.dorny_summary.outputs.failed }}
+          skipped: ${{ steps.dorny_summary.outputs.skipped }}
+        run: |
+          echo "$passed / $(($passed + $failed + $skipped)) Tests passed" >> $GITHUB_STEP_SUMMARY  
+          echo "For detailed summary check the **Test Summary** tab" >> $GITHUB_STEP_SUMMARY       
+          
+      - name: Stamp artifact name with commit hash,append date-time & set as env var
+        run: |
+          artifactName1=$(ls target/*.jar | head -1)
+          commitHash=$(git rev-parse --short "$GITHUB_SHA")
+          artifactName2=$(ls target/*.jar | head -1 | sed "s/.jar/.$commitHash.`date +'%Y-%m-%d_%H%M%S'`.jar/g" )
+          mv $artifactName1 $artifactName2
+          echo Mule App JAR FileName is $(echo $artifactName2 | cut -d"/" -f2)
+          echo "ARTIFACT_NAME=$(echo $artifactName2 | cut -d"/" -f2 | sed "s/.jar//g")" >> $GITHUB_ENV
+                 
+          
+  # deploy-cloudhub-env:
+  #   name: Deploy in cloudhub-env
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   environment: ${{github.ref_name}}
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: actions/download-artifact@v2
+  #     with:
+  #       name: ${{ env.ARTIFACT_NAME }}
+  #       path: ${{ github.workspace }}
+        
+  #   - name: Publish to Exchange
+  #     env:
+  #        GLOBAL_MULESOFT_CICD_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+  #        GLOBAL_MULESOFT_CICD_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
+  #        NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+  #        NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+  #        SECRET_KEY: ${{secrets.SECRET_KEY}}
+  #     run: mvn -s .maven/settings.xml deploy -DskipTests
+      
+  #   - name: Deploy to CloudHub
+  # #Pass in the secrets we need for deployment as environment variables
+  #     env:
+  #        GLOBAL_MULESOFT_CICD_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+  #        GLOBAL_MULESOFT_CICD_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
+  #        NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+  #        NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+  #        SECRET_KEY: ${{secrets.SECRET_KEY}}
+  #        CLIENT_ID: ${{secrets.DEV_CLIENT_ID}}
+  #        CLIENT_SECRET: ${{secrets.DEV_CLIENT_SECRET}}
+      run: |
+        artifactName=$(find . -type f -name "*.jar" | head -1)
+        mvn mule:deploy -DskipTests -Dmule.artifact=${artifactName} -s settings.xml -Denv=${{vars.MULE_ENV}} -Denvironment=${{vars.CLOUDHUB_ENV}} -Dregion=${{vars.DEPLOYMENT_TARGET}} -DbusinessGroupId=${{vars.BUS_GRP_ID}} -DapplicationName=${{vars.APP_NAME}} -Dreplicas=${{vars.REPLICAS}} -DvCores=${{vars.VCORES}} -DsecretKey=$SECRET_KEY -Danypoint.platform.client_id=$CLIENT_ID -Danypoint.platform.client_secret=$CLIENT_SECRET           
