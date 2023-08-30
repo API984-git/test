@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <servers>	
+    <server>
+		<id>MuleRepository</id>
+		<username>${env.NEXUS_USERNAME}</username>
+		<password>${env.NEXUS_PASSWORD}</password>
+	</server>
+	
+	  <server>
+       <id>anypoint-exchange-v3</id>
+	   <username>~~~Client~~~</username>
+	   <password>${env.CONNECTED_APP_CLIENT_ID}~?~${env.CONNECTED_APP_CLIENT_ID}</password>
+      </server>
+	  
+  </servers>
+  <pluginGroups>
+    <pluginGroup>org.mule.tools</pluginGroup>
+  </pluginGroups>
+  <!-- <activeProfiles> -->
+    <!-- <activeProfile>github</activeProfile> -->
+  <!-- </activeProfiles> -->
+  <profiles>
+    <profile>
+        <id>Mule</id>
+        <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
+        <repositories>
+            <repository>
+                <id>MuleRepository</id>
+                <name>MuleRepository</name>
+                <url>https://repository.mulesoft.org/nexus-ee/content/repositories/releases-ee/</url>
+                <layout>default</layout>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>true</enabled>
+                </snapshots>
+            </repository>
+        </repositories>
+    </profile>
+	<profile>
+        <id>anypoint-exchange-v3</id>
+        <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
+		<properties>
+                <mulesoft.exchange.groupid>0e7ea94c-0bab-4996-93c0-d9216c65572a</mulesoft.exchange.groupid>
+         </properties>
+        <repositories>
+            <repository>
+                <id>anypoint-exchange-v2</id>
+                <name>anypoint-exchange-v2</name>
+                <url>https://maven.anypoint.mulesoft.com/api/v2/organizations/${mulesoft.exchange.groupid}/maven</url>
+                <layout>default</layout>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>true</enabled>
+                </snapshots>
+            </repository>
+        </repositories>
+    </profile>
+</profiles>
+</settings>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="a570e297-163f-4d84-935a-5d020970390e" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="261b9e82-82ff-451f-ab59-9a26ac4f6c23" file="properties/secure-${env}.yaml" key="${key}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="7a7ca36a-9ceb-48a6-9429-bfdd683423b6" file="properties/${env}.yaml" />
+	<flow name="testFlow" doc:id="57f03aec-ad50-440f-ab0e-42052b4114ca" >
+		<http:listener doc:name="Listener" doc:id="fa2dbcfb-ebbb-420b-bbc5-9d0eccf349fe" config-ref="HTTP_Listener_config" path="/test"/>
+		<logger level="INFO" doc:name="Logger" doc:id="b7ba54ad-12ac-4243-b294-36ef8f2a43ac" message="#[&quot;From Test App Config Msg - &quot; ++ p('msg')]"/>
+		<logger level="INFO" doc:name="endLog" doc:id="da58d249-5983-48c5-b075-575b9e4856cb" message='#["Parameter from POM: " ++ (p("pomParam") default "NA")]'/>
+	</flow>
+</mule>
