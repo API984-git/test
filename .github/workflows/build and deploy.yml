@@ -55,7 +55,7 @@ jobs:
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-        run: mvn -B test -f pom.xml -s settings.xml -Denv=${{vars.MULE_ENV}} -Dkey=${{secrets.SECRET_KEY}}
+        run: mvn -B package -f pom.xml -s settings.xml -Denv=${{vars.MULE_ENV}} -Dkey=${{secrets.SECRET_KEY}}
           
       - name: Dorny Test Report
         if: always()
@@ -76,7 +76,8 @@ jobs:
         run: |
           echo "$passed / $(($passed + $failed + $skipped)) Tests passed" >> $GITHUB_STEP_SUMMARY  
           echo "For detailed summary check the **Test Summary** tab" >> $GITHUB_STEP_SUMMARY       
-          
+
+              
       - name: Stamp artifact name with commit hash,append date-time & set as env var
         run: |
           artifactName1=$(ls target/*.jar | head -1)
