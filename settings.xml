@@ -13,7 +13,7 @@
 	  <server>
        <id>anypoint-exchange-v3</id>
 	   <username>~~~Client~~~</username>
-	   <password>${env.CONNECTED_APP_CLIENT_ID}~?~${env.CONNECTED_APP_CLIENT_ID}</password>
+	   <password>${env.CONNECTED_APP_CLIENT_ID}~?~${env.CONNECTED_APP_CLIENT_SECRET}</password>
       </server>
 	  
   </servers>
