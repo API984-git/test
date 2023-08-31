@@ -16,7 +16,6 @@ on:
       - dev
     # Don't trigger the workflow when only workflow file / gitignore / README has the changes
     paths-ignore: 
-      - '.github/workflows/**'
       - '.gitignore'
 
   # Allows you to run this workflow manually from the Actions tab
@@ -39,4 +38,6 @@ jobs:
       - name: GET Application Version
         run: |
           curl --location --request GET 'https://anypoint.mulesoft.com/exchange/api/v2/assets/bd7f4d4d-1fcc-4b30-94a5-4eafbebdf8ff/test' -u ~~~Client~~~:22587927742a4ce6bc156f3d9d1f6dfe~?~e77c4B0540994C7DBEcF6f6d94B663e3 -o response.json
-          cat response.json
+          cat jq '.version' response.json
+
+     
