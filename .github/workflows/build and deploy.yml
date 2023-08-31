@@ -56,7 +56,14 @@ jobs:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
         run: mvn -B package -f pom.xml -s settings.xml -Denv=${{vars.MULE_ENV}} -Dkey=${{secrets.SECRET_KEY}}
-          
+        
+      - name: print settings
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+        run: cat settings.xml   
+
+        
       - name: Dorny Test Report
         if: always()
         id: dorny_summary
