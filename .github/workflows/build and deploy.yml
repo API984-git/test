@@ -43,4 +43,4 @@ jobs:
         run: echo $EXCH_APP_VERSION
      
       - name: check version with pom 
-        run: echo -e $EXCH_APP_VERSION}\n1.0.0 | sort -V 
+        run: echo -e $EXCH_APP_VERSION\n1.0.0 | sort -V 
