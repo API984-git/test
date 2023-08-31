@@ -39,8 +39,9 @@ jobs:
         run: |
           curl --location --request GET 'https://anypoint.mulesoft.com/exchange/api/v2/assets/bd7f4d4d-1fcc-4b30-94a5-4eafbebdf8ff/test' -u ~~~Client~~~:22587927742a4ce6bc156f3d9d1f6dfe~?~e77c4B0540994C7DBEcF6f6d94B663e3 -o response.json
           echo "EXCH_APP_VERSION=$(jq '.version' response.json)" >> $GITHUB_ENV 
+      - name: Add both versions
+        run:  echo "EXCH_APP_VERSION=${EXCH_APP_VERSION}\n1.1.3" >> $GITHUB_ENV
       - name: Print Exchange app version
-        run: echo $EXCH_APP_VERSION
-     
+        run: echo $EXCH_APP_VERSION     
       - name: check version with pom 
-        run: echo -e "${EXCH_APP_VERSION}\n1.1.3" | sort -V 
+        run: echo -e $EXCH_APP_VERSION | sort -V 
