@@ -88,26 +88,25 @@ jobs:
           echo "ARTIFACT_NAME=$(echo $artifactName2 | cut -d"/" -f2 | sed "s/.jar//g")" >> $GITHUB_ENV
                  
           
-  # deploy-cloudhub-env:
-  #   name: Deploy in cloudhub-env
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   environment: ${{github.ref_name}}
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - uses: actions/download-artifact@v2
-  #     with:
-  #       name: ${{ env.ARTIFACT_NAME }}
-  #       path: ${{ github.workspace }}
+  deploy-cloudhub-env:
+    name: Deploy in cloudhub-env
+    needs: build
+    runs-on: ubuntu-latest
+    environment: ${{github.ref_name}}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.ARTIFACT_NAME }}
+        path: ${{ github.workspace }}
         
-  #   - name: Publish to Exchange
-  #     env:
-  #        GLOBAL_MULESOFT_CICD_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
-  #        GLOBAL_MULESOFT_CICD_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
-  #        NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-  #        NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-  #        SECRET_KEY: ${{secrets.SECRET_KEY}}
-  #     run: mvn -s .maven/settings.xml deploy -DskipTests
+    - name: Publish to Exchange
+      env:
+         CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+         CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
+         NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+         NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+      run: mvn -s settings.xml deploy -DskipTests
       
   #   - name: Deploy to CloudHub
   # #Pass in the secrets we need for deployment as environment variables
