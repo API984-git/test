@@ -86,8 +86,14 @@ jobs:
           mv $artifactName1 $artifactName2
           echo Mule App JAR FileName is $(echo $artifactName2 | cut -d"/" -f2)
           echo "ARTIFACT_NAME=$(echo $artifactName2 | cut -d"/" -f2 | sed "s/.jar//g")" >> $GITHUB_ENV
-                 
-          
+
+      - name: Print Artifact Name
+        run: echo ${{ env.ARTIFACT_NAME }}
+      - uses: actions/upload-artifact@v2
+        with:
+            name: ${{ env.ARTIFACT_NAME }}
+            path: target/*.jar
+
   deploy-cloudhub-env:
     name: Deploy in cloudhub-env
     needs: build
