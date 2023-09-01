@@ -47,7 +47,7 @@ jobs:
         uses: mavrosxristoforos/get-xml-info@1.0
         with:
           xml-file: 'pom.xml'
-          xpath: '//http://maven.apache.org/POM/4.0.0:project/http://maven.apache.org/POM/4.0.0:version'
+          xpath: '//version'
       - name: Create Release
         run: echo "POM_APP_VERSION=$(steps.getxml.outputs.info)" >> $GITHUB_ENV 
        
