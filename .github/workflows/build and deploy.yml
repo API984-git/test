@@ -119,8 +119,8 @@ jobs:
          CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-      run: cat settings.xml
-      # run: mvn -f pom.xml -s settings.xml deploy -DskipTests
+      # run: cat settings.xml
+      run: mvn -f pom.xml -s settings.xml deploy -DskipTests
       
   #   - name: Deploy to CloudHub
   # #Pass in the secrets we need for deployment as environment variables
