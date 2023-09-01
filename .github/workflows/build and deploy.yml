@@ -42,14 +42,10 @@ jobs:
       - name: Print Exchange app version
         run: echo $EXCH_APP_VERSION     
         
-      - name: Get XML
-        id: getxml
-        uses: mavrosxristoforos/get-xml-info@1.0
+      - name: Get Pom version
+        uses: Mudlet/xmlstarlet-action@master
         with:
-          xml-file: 'pom.xml'
-          xpath: '//http://maven.apache.org/POM/4.0.0:project/version'
-      - name: Create Release
-        run: echo "POM_APP_VERSION=$(steps.getxml.outputs.info)" >> $GITHUB_ENV 
+         args: sel -t -v x="http://maven.apache.org/POM/4.0.0" -d "//x:project/x:version" pom.xml
        
       - name: check version with pom 
         run: echo -e "${EXCH_APP_VERSION}\n1.1.1" | sort -V 
