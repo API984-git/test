@@ -124,4 +124,4 @@ jobs:
          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
       run: |
-         mvn mule:deploy -DskipTests  -s settings.xml -Denv=${{vars.MULE_ENV}} -Denvironment=${{vars.CLOUDHUB_ENV}} -Dregion=${{vars.CLOUDHUB_REGION}} -DbusinessGroupId=${{vars.BUSSINESS_GRP_ID}} -DapplicationName=${{vars.APP_NAME}} -Dreplicas=${{vars.REPLICAS}} -DvCores=${{vars.VCORES}} -Dkey=${{secrets.SECRET_KEY}}           
+         mvn mule:deploy -DskipTests  -s settings.xml -Denv=${{vars.MULE_ENV}} -Denvironment=${{vars.CLOUDHUB_ENV}} -Dregion=${{vars.CLOUDHUB_REGION}} -DbusinessGroupId=${{vars.BUSSINESS_GRP_ID}} -DapplicationName=${{vars.APP_NAME}} -Dreplicas=${{vars.REPLICAS}} -DvCores=${{vars.VCORES}} -Dkey=${{secrets.SECRET_KEY}} -Dserver=${{vars.server}}           
