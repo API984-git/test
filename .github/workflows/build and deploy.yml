@@ -123,5 +123,14 @@ jobs:
          CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+         env: ${{vars.MULE_ENV}}
+         environment: ${{vars.CLOUDHUB_ENV}}
+         region: ${{vars.CLOUDHUB_REGION}}
+         businessGroupId: ${{vars.BUSSINESS_GRP_ID}}
+         applicationName: ${{vars.APP_NAME}}
+         replicas: ${{vars.REPLICAS}}
+         vCores: ${{vars.VCORES}}
+         key: ${{secrets.SECRET_KEY}}
+         server: ${{vars.SERVER}}
       run: |
-         mvn mule:deploy -DskipTests  -s settings.xml -Denv=${{vars.MULE_ENV}} -Denvironment=${{vars.CLOUDHUB_ENV}} -Dregion=${{vars.CLOUDHUB_REGION}} -DbusinessGroupId=${{vars.BUSSINESS_GRP_ID}} -DapplicationName=${{vars.APP_NAME}} -Dreplicas=${{vars.REPLICAS}} -DvCores=${{vars.VCORES}} -Dkey=${{secrets.SECRET_KEY}} -Dserver=${{vars.server}}           
+         mvn mule:deploy -DskipTests -s settings.xml 
