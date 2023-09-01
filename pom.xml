@@ -4,7 +4,7 @@
 
 	<groupId>bd7f4d4d-1fcc-4b30-94a5-4eafbebdf8ff</groupId>
 	<artifactId>test</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.3</version>
 	<packaging>mule-application</packaging>
 
 	<name>test</name>
@@ -12,10 +12,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
+		<muleVersion>4.4.0</muleVersion>
 		<app.runtime>4.4.0-20211227</app.runtime>
-		<mule.maven.plugin.version>3.7.1</mule.maven.plugin.version>
-		<munit.version>2.3.7</munit.version>
+		<mule.maven.plugin.version>3.8.1</mule.maven.plugin.version>
 	</properties>
 
 	<build>
@@ -31,53 +30,48 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					<cloudHubDeployment>
-						<objectStoreV2>true</objectStoreV2>
-						<uri>https://anypoint.mulesoft.com/</uri>
+					<classifier>mule-application</classifier>
+					<cloudhub2Deployment>
+						<uri>https://anypoint.mulesoft.com</uri>
+						<provider>MC</provider>
+						<environment>${environment}</environment>
+						<target>${region}</target>
+						<server>${server}</server>
 						<muleVersion>${mule.version}</muleVersion>
-						<server>anypoint-exchange-v3</server>
 						<businessGroupId>${businessGroupId}</businessGroupId>
 						<applicationName>${applicationName}</applicationName>
-						<environment>${environment}</environment>
-						<workerType>${workerType}</workerType>
-						<workers>${workers}</workers>
-						<region>${region}</region>
+						<replicas>${replicas}</replicas>
+						<vCores>${vCores}</vCores>
+						<deploymentSettings>
+							<lastMileSecurity>true</lastMileSecurity>
+							<forwardSslSession>true</forwardSslSession>
+						</deploymentSettings>
 						<properties>
 							<env>${env}</env>
-							<key>${secretKey}</key>
-							<pomParam>${parameter_pom}</pomParam>
 						</properties>
-					</cloudHubDeployment>
-					<classifier>mule-application</classifier>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>com.mulesoft.munit.tools</groupId>
-				<artifactId>munit-maven-plugin</artifactId>
-				<version>${munit.version}</version>
-				<executions>
-					<execution>
-						<id>test</id>
-						<phase>test</phase>
-						<goals>
-							<goal>test</goal>
-							<goal>coverage-report</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<coverage>
-						<runCoverage>true</runCoverage>
-						<formats>
-							<format>html</format>
-							<format>sonar</format>
-							<format>json</format>
-						</formats>
-					</coverage>
+						<secureProperties>
+							<key>${key}</key>
+						</secureProperties>
+						<integrations>
+							<services>
+								<objectStoreV2>
+									<enabled>true</enabled>
+								</objectStoreV2>
+							</services>
+						</integrations>
+					</cloudhub2Deployment>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+	<distributionManagement>
+		<repository>
+			<id>anypoint-exchange-v3</id>
+			<name>Corporate Repository</name>
+			<url>https://maven.anypoint.mulesoft.com/api/v3/organizations/bd7f4d4d-1fcc-4b30-94a5-4eafbebdf8ff/maven</url>
+			<layout>default</layout>
+		</repository>
+	</distributionManagement>
 
 	<dependencies>
 		<dependency>
@@ -86,39 +80,36 @@
 			<version>1.6.0</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
-
-		<dependency>
-			<groupId>com.mulesoft.munit</groupId>
-			<artifactId>munit-runner</artifactId>
-			<version>2.3.7</version>
-			<classifier>mule-plugin</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.mulesoft.munit</groupId>
-			<artifactId>munit-tools</artifactId>
-			<version>2.3.7</version>
-			<classifier>mule-plugin</classifier>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mule.weave</groupId>
-			<artifactId>assertions</artifactId>
-			<version>1.0.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
+				<dependency>
 			<groupId>com.mulesoft.modules</groupId>
 			<artifactId>mule-secure-configuration-property-module</artifactId>
 			<version>1.2.5</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-sockets-connector</artifactId>
+			<version>1.2.2</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.connectors</groupId>
+			<artifactId>mule-salesforce-connector</artifactId>
+			<version>10.13.1</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
 	</dependencies>
 
 	<repositories>
 		<repository>
+			<id>anypoint-exchange-v2</id>
+			<name>Anypoint Exchange</name>
+			<url>https://maven.anypoint.mulesoft.com/api/v2/maven</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
 			<id>anypoint-exchange-v3</id>
-			<name>Anypoint Exchange V3</name>
+			<name>Anypoint Exchange</name>
 			<url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
 			<layout>default</layout>
 		</repository>
@@ -132,6 +123,10 @@
 
 	<pluginRepositories>
 		<pluginRepository>
+			<id>mule-public</id>
+			<url>https://repository.mulesoft.org/nexus/content/repositories/releases</url>
+		</pluginRepository>
+		<pluginRepository>
 			<id>mulesoft-releases</id>
 			<name>MuleSoft Releases Repository</name>
 			<layout>default</layout>
@@ -141,11 +136,5 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
-	<distributionManagement>
-		<repository>
-			<id>anypoint-exchange-v3</id>
-			<url>https://maven.anypoint.mulesoft.com/api/v2/organizations/bd7f4d4d-1fcc-4b30-94a5-4eafbebdf8ff/maven</url>
-			<layout>default</layout>
-		</repository>
-	</distributionManagement>
+
 </project>
