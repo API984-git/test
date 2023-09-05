@@ -148,6 +148,6 @@ jobs:
   #        replicas: ${{vars.REPLICAS}}
   #        vCores: ${{vars.VCORES}}
   #        key: ${{secrets.SECRET_KEY}}
-         server: ${{vars.SERVER}}
-      run: |
-         mvn mule:deploy -DskipTests -s settings.xml 
+      #    server: ${{vars.SERVER}}
+      # run: |
+      #    mvn mule:deploy -DskipTests -s settings.xml 
