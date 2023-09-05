@@ -16,7 +16,7 @@ on:
       - dev
     # Don't trigger the workflow when only workflow file / gitignore / README has the changes
     paths-ignore: 
-      - '.github/workflows/**'
+      # - '.github/workflows/**'
       - '.gitignore'
 
   # Allows you to run this workflow manually from the Actions tab
@@ -36,7 +36,7 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v3
       - name: Print Github token
-        run: echo ${{secrets.github.TOKEN }}
+        run: echo ${{ secrets.GITHUB_TOKEN }
   #     - name: Cache dependencies
   #       uses: actions/cache@v3
   #       with:
