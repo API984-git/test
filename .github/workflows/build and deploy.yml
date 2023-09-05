@@ -25,10 +25,10 @@ on:
 jobs:
   build:
     name: Test & Build
-    
+    if: ${{github.ref_name}} == 'dev'
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    environment: dev
+    environment: ${{github.ref_name}}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -97,17 +97,29 @@ jobs:
             path: target/*.jar
   deploy-cloudhub-env:
     name: Deploy in cloudhub-env
-    needs: build
     runs-on: ubuntu-latest
-    environment: dev
+    environment: ${{github.ref_name}}
     steps:
     - uses: actions/checkout@v2
     - uses: actions/download-artifact@v2
       with:
         name: ${{ env.ARTIFACT_NAME }}
         path: ${{ github.workspace }}
-        
+    - name: Get Manual Approval before Publish
+      uses: trstringer/manual-approval@v1
+      timeout-minutes: 2
+      with:
+       secret: ${{ github.TOKEN }}
+       approvers: gautamgupta01, API984-git
+       minimum-approvals: 1
+       issue-title: "Deploying app to ${{github.ref_name}} environment"
+       issue-body: "Please approve or deny the deployment of version v1.0"
+       exclude-workflow-initiator-as-approver: false
+       additional-approved-words: ''
+       additional-denied-words: '' 
+       
     - name: Publish to Exchange
+      if: ${{github.ref_name}} == 'dev'
       env:
          CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
          CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
