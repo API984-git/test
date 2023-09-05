@@ -4,7 +4,7 @@
 
 	<groupId>bd7f4d4d-1fcc-4b30-94a5-4eafbebdf8ff</groupId>
 	<artifactId>test</artifactId>
-	<version>1.0.10</version>
+	<version>1.2.0</version>
 	<packaging>mule-application</packaging>
 
 	<name>test</name>
