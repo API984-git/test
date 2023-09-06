@@ -160,4 +160,4 @@ jobs:
          key: ${{secrets.SECRET_KEY}}
          server: ${{vars.SERVER}}
       run: |
-         mvn mule:deploy -DskipTests -s settings.xml 
+         mvn deploy -DmuleDeploy -DskipTests -s settings.xml 
