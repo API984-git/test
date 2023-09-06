@@ -137,10 +137,10 @@ jobs:
 
       run: mvn -f pom.xml -s settings.xml deploy -DskipTests
       
-    
-    - name: get-pom-version
-      id: pom-version
-      uses: CptMokoena/maven-get-version-action@master
+      
+    - name: Get Project Version from pom.xml
+      uses: entimaniac/read-pom-version-action@1.0.0
+            
       
     - name: Deploy to CloudHub
   #Pass in the secrets we need for deployment as environment variables
