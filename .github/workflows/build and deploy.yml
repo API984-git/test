@@ -56,8 +56,8 @@ jobs:
           nexus_password: ${{ secrets.NEXUS_PASSWORD }}
           env: ${{vars.MULE_ENV}}
           key: ${{secrets.SECRET_KEY}}
-          # GITHUB_TOKEN: 
-          # SONAR_TOKEN: 
+          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B package -f pom.xml -s settings.xml 
         # run: mvn -B verify  -f pom.xml -s settings.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=API984-git_sonar-cloud-test 
         
