@@ -141,7 +141,7 @@ jobs:
       uses: mavrosxristoforos/get-xml-info@1.0
       with:
         xml-file: 'pom.xml'
-        xpath: '//version'
+        xpath: '/version'
         namespaces: '{"x": "http://maven.apache.org/POM/4.0.0"}'   
       
     - name: Deploy to CloudHub
