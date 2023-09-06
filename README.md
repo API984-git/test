@@ -1,8 +1,4 @@
 # test
 pipeline poc
 sgfh436
-d
-erwr
-fdgdf
-s
-asdas
+
