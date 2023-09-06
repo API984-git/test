@@ -159,5 +159,6 @@ jobs:
          vCores: ${{vars.VCORES}}
          key: ${{secrets.SECRET_KEY}}
          server: ${{vars.SERVER}}
+         MULE_ARTIFACT: ${{secrets.ARTIFACT}}
       run: |
-         mvn mule:deploy -DskipTests -s settings.xml -Dmule.artifact= ${{secrets.ARTIFACT}}
+         mvn mule:deploy -DskipTests -s settings.xml -Dmule.artifact= $MULE_ARTIFACT
