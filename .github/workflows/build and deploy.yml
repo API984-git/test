@@ -138,7 +138,7 @@ jobs:
       run: mvn -f pom.xml -s settings.xml deploy -DskipTests
       
       
-    - name: Get Project Version from pom.xml
+    - name: Jar version published to Exchange
       uses: entimaniac/read-pom-version-action@1.0.0
             
       
