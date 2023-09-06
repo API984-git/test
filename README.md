@@ -1,5 +1,3 @@
 # test
 pipeline poc
-sg
-
-fvsf
+pom version
