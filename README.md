@@ -1,3 +1,3 @@
 # test
 pipelipoc
-pom vxzczx
+pom vxz
