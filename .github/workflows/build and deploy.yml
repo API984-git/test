@@ -161,4 +161,4 @@ jobs:
          server: ${{vars.SERVER}}
          MULE_ARTIFACT: ${{secrets.ARTIFACT}}
       run: |
-         mvn mule:deploy -DskipTests -s settings.xml -Dmule.artifact="abc"
+         mvn mule:deploy -DskipTests -s settings.xml -Dmule.artifact= $MULE_ARTIFACT
