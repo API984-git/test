@@ -56,8 +56,11 @@ jobs:
           nexus_password: ${{ secrets.NEXUS_PASSWORD }}
           env: ${{vars.MULE_ENV}}
           key: ${{secrets.SECRET_KEY}}
+          # GITHUB_TOKEN: 
+          # SONAR_TOKEN: 
         run: mvn -B package -f pom.xml -s settings.xml 
-        # -Denv=${{vars.MULE_ENV}} -Dkey=${{secrets.SECRET_KEY}}
+        # run: mvn -B verify  -f pom.xml -s settings.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=API984-git_sonar-cloud-test 
+        
       - name: Dorny Test Report
         if: always()
         id: dorny_summary
@@ -116,7 +119,7 @@ jobs:
        approvers: API984-git
        minimum-approvals: 1
        issue-title: "Deploying app to ${{github.ref_name}} environment"
-       issue-body: "Please approve or deny the deployment of version v1.0"
+       issue-body: "Please approve or deny the deployment of application"
        exclude-workflow-initiator-as-approver: false
        additional-approved-words: ''
        additional-denied-words: '' 
