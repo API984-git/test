@@ -35,6 +35,8 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout this repo
         uses: actions/checkout@v3
+      - name: Print branch name
+        run: echo ${{github.ref_name}}     
       - name: Cache dependencies
         uses: actions/cache@v3
         with:
