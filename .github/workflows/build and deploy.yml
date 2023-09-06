@@ -114,18 +114,18 @@ jobs:
         name: ${{ env.ARTIFACT_NAME }}
         path: ${{ github.workspace }}
 
-    - name: Get Manual Approval before Publish
-      uses: trstringer/manual-approval@v1
-      timeout-minutes: 2
-      with:
-       secret: ${{ github.TOKEN }}
-       approvers: API984-git
-       minimum-approvals: 1
-       issue-title: "Deploying app to ${{github.ref_name}} environment"
-       issue-body: "Please approve or deny the deployment of application"
-       exclude-workflow-initiator-as-approver: false
-       additional-approved-words: ''
-       additional-denied-words: '' 
+    # - name: Get Manual Approval before Publish
+    #   uses: trstringer/manual-approval@v1
+    #   timeout-minutes: 2
+    #   with:
+    #    secret: ${{ github.TOKEN }}
+    #    approvers: API984-git
+    #    minimum-approvals: 1
+    #    issue-title: "Deploying app to ${{github.ref_name}} environment"
+    #    issue-body: "Please approve or deny the deployment of application"
+    #    exclude-workflow-initiator-as-approver: false
+    #    additional-approved-words: ''
+    #    additional-denied-words: '' 
        
     - name: Publish to Exchange
       if: github.ref_name == 'main'
@@ -141,7 +141,7 @@ jobs:
       uses: mavrosxristoforos/get-xml-info@1.0
       with:
         xml-file: 'pom.xml'
-        xpath: '//project/version'
+        xpath: '//version'
         namespaces: '{"x": "http://maven.apache.org/POM/4.0.0"}'   
       
     - name: Deploy to CloudHub
