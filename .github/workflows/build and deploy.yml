@@ -25,7 +25,7 @@ on:
 jobs:
   build:
     name: Test & Build
-    if: github.ref_name == 'main'
+    if: github.ref_name == 'dev'
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     environment: ${{github.ref_name}}
@@ -110,7 +110,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: actions/download-artifact@v2
-      if: github.ref_name == 'main'
+      if: github.ref_name == 'dev'
       with:
         name: ${{ env.ARTIFACT_NAME }}
         path: ${{ github.workspace }}
