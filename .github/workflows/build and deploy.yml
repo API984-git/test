@@ -129,7 +129,7 @@ jobs:
        additional-denied-words: '' 
        
     - name: Publish to Exchange
-      if: github.ref_name == 'main'
+      if: github.ref_name == 'dev'
       env:
          CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
          CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
