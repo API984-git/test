@@ -100,7 +100,10 @@ jobs:
 
   deploy-cloudhub-env:
     name: Deploy in cloudhub-env
-    if: always() 
+    if: |
+      always() &&
+      !contains(needs.build.result, 'failure') &&
+      !contains(needs.build.result, 'cancelled')
     needs: build
     runs-on: ubuntu-latest
     environment: ${{github.ref_name}}
