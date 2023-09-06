@@ -137,12 +137,10 @@ jobs:
 
       run: mvn -f pom.xml -s settings.xml deploy -DskipTests
       
-    - name: Print branch name
-      uses: mavrosxristoforos/get-xml-info@1.0
-      with:
-        xml-file: 'pom.xml'
-        xpath: '/version'
-        namespaces: '{"x": "http://maven.apache.org/POM/4.0.0"}'   
+    
+    - name: get-pom-version
+      id: pom-version
+      uses: CptMokoena/maven-get-version-action@master
       
     - name: Deploy to CloudHub
   #Pass in the secrets we need for deployment as environment variables
