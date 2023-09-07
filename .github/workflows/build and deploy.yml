@@ -149,6 +149,7 @@ jobs:
          CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+         MULE_ARTIFACT: ${{ secrets.ARTIFACT }}
          env: ${{vars.MULE_ENV}}
          environment: ${{vars.CLOUDHUB_ENV}}
          region: ${{vars.CLOUDHUB_REGION}}
@@ -158,5 +159,6 @@ jobs:
          vCores: ${{vars.VCORES}}
          key: ${{secrets.SECRET_KEY}}
          server: ${{vars.SERVER}}
+         
       run: |
-         mvn mule:deploy -DskipTests -s settings.xml -Dmule.artifact=$applicationName
+         mvn mule:deploy -DskipTests -s settings.xml $MULE_ARTIFACT
