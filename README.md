@@ -2,5 +2,3 @@
 pipelipoc
 pom 
 fdg
-sdfsdq
-vdf
