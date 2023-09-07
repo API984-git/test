@@ -158,6 +158,5 @@ jobs:
          vCores: ${{vars.VCORES}}
          key: ${{secrets.SECRET_KEY}}
          server: ${{vars.SERVER}}
-         mule.artifact: ${{vars.APP_NAME}}
       run: |
-         mvn mule:deploy -DskipTests -s settings.xml 
+         mvn mule:deploy -DskipTests -s settings.xml -Dmule.artifact= "demo"
