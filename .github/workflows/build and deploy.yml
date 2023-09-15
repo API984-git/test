@@ -33,7 +33,7 @@ jobs:
       run: |
         curl -d "client_id=8038e0bf437b413385f37526a1f2baf1&client_secret=dd1683d9f8194f67AcdaeDa6d468807a&grant_type=client_credentials" -H "Content-Type: application/x-www-form-urlencoded" -X POST https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token	 -o response.json
         echo "access_token=$(jq -r '.access_token' response.json)" >> $GITHUB_ENV 
-    - name: Print Github token
+    - name: Print Access token
       run: echo $access_token
     - name: Call Monitoring Tests
       run: curl -X POST https://anypoint.mulesoft.com/apitesting/xapi/v1/organizations/f015bd3e-6860-45a2-8012-1af3eec6fdba/suites/f015bd3e-6860-45a2-8012-1af3eec6fdba:test-afm/versions/1.0.16/executions -H "Content-Type:application/json" -H "Authorization:Bearer ${access_token}"  -d '{"configuration":"default","targetId":"8b749514-11f7-46bc-9980-6d177ce98c0c"}' 
