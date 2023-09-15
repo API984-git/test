@@ -27,136 +27,141 @@ jobs:
     name: Test & Build
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    environment: ${{github.ref_name}}
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout this repo
-        uses: actions/checkout@v3    
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+    - name: Get access_token
+      run: |
+        curl -d "client_id=8038e0bf437b413385f37526a1f2baf1&client_secret=dd1683d9f8194f67AcdaeDa6d468807a&grant_type=client_credentials" -H "Content-Type: application/x-www-form-urlencoded" -X POST https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token	 -o response.json
+        echo "access_token=$(jq -r '.access_token' response.json)" >> $GITHUB_ENV 
+    - name: Print Github token
+      run: echo $access_token
+    
+  #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+  #     - name: Checkout this repo
+  #       uses: actions/checkout@v3    
+  #     - name: Cache dependencies
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: ~/.m2/repository
+  #         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-maven-
 
-      - name: Setup JDK 1.8
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: 8
-          cache: maven
+  #     - name: Setup JDK 1.8
+  #       uses: actions/setup-java@v3
+  #       with:
+  #         distribution: 'zulu'
+  #         java-version: 8
+  #         cache: maven
       
-      - name: Test and Build Jar
-        env:
-          nexus_username: ${{ secrets.NEXUS_USERNAME }}
-          nexus_password: ${{ secrets.NEXUS_PASSWORD }}
-          env: ${{vars.MULE_ENV}}
-          key: ${{secrets.SECRET_KEY}}
-          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B package -f pom.xml -s settings.xml 
-        # run: mvn -B verify  -f pom.xml -s settings.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=API984-git_sonar-cloud-test 
+  #     - name: Test and Build Jar
+  #       env:
+  #         nexus_username: ${{ secrets.NEXUS_USERNAME }}
+  #         nexus_password: ${{ secrets.NEXUS_PASSWORD }}
+  #         env: ${{vars.MULE_ENV}}
+  #         key: ${{secrets.SECRET_KEY}}
+  #         # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #       run: mvn -B package -f pom.xml -s settings.xml 
+  #       # run: mvn -B verify  -f pom.xml -s settings.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=API984-git_sonar-cloud-test 
         
-      - name: Dorny Test Report
-        if: always()
-        id: dorny_summary
-        uses: dorny/test-reporter@v1
-        with:
-          name: Test Summary
-          path:  target/surefire-reports/*.xml
-          reporter: java-junit
-          fail-on-error: 'true'
+  #     - name: Dorny Test Report
+  #       if: always()
+  #       id: dorny_summary
+  #       uses: dorny/test-reporter@v1
+  #       with:
+  #         name: Test Summary
+  #         path:  target/surefire-reports/*.xml
+  #         reporter: java-junit
+  #         fail-on-error: 'true'
           
-      - name: Add Tests summary
-        if: always()
-        env:
-          passed: ${{ steps.dorny_summary.outputs.passed }}
-          failed: ${{ steps.dorny_summary.outputs.failed }}
-          skipped: ${{ steps.dorny_summary.outputs.skipped }}
-        run: |
-          echo "$passed / $(($passed + $failed + $skipped)) Tests passed" >> $GITHUB_STEP_SUMMARY  
-          echo "For detailed summary check the **Test Summary** tab" >> $GITHUB_STEP_SUMMARY       
+  #     - name: Add Tests summary
+  #       if: always()
+  #       env:
+  #         passed: ${{ steps.dorny_summary.outputs.passed }}
+  #         failed: ${{ steps.dorny_summary.outputs.failed }}
+  #         skipped: ${{ steps.dorny_summary.outputs.skipped }}
+  #       run: |
+  #         echo "$passed / $(($passed + $failed + $skipped)) Tests passed" >> $GITHUB_STEP_SUMMARY  
+  #         echo "For detailed summary check the **Test Summary** tab" >> $GITHUB_STEP_SUMMARY       
 
               
-      - name: Stamp artifact name with commit hash,append date-time & set as env var
-        run: |
-          artifactName1=$(ls target/*.jar | head -1)
-          commitHash=$(git rev-parse --short "$GITHUB_SHA")
-          artifactName2=$(ls target/*.jar | head -1 | sed "s/.jar/.$commitHash.`date +'%Y-%m-%d_%H%M%S'`.jar/g" )
-          mv $artifactName1 $artifactName2
-          echo Mule App JAR FileName is $(echo $artifactName2 | cut -d"/" -f2)
-          echo "ARTIFACT_NAME=$(echo $artifactName2 | cut -d"/" -f2 | sed "s/.jar//g")" >> $GITHUB_ENV
+  #     - name: Stamp artifact name with commit hash,append date-time & set as env var
+  #       run: |
+  #         artifactName1=$(ls target/*.jar | head -1)
+  #         commitHash=$(git rev-parse --short "$GITHUB_SHA")
+  #         artifactName2=$(ls target/*.jar | head -1 | sed "s/.jar/.$commitHash.`date +'%Y-%m-%d_%H%M%S'`.jar/g" )
+  #         mv $artifactName1 $artifactName2
+  #         echo Mule App JAR FileName is $(echo $artifactName2 | cut -d"/" -f2)
+  #         echo "ARTIFACT_NAME=$(echo $artifactName2 | cut -d"/" -f2 | sed "s/.jar//g")" >> $GITHUB_ENV
 
-      - name: Print Artifact Name
-        run: echo ${{ env.ARTIFACT_NAME }}
-      - uses: actions/upload-artifact@v2
-        with:
-            name: ${{ env.ARTIFACT_NAME }}
-            path: target/*.jar
+  #     - name: Print Artifact Name
+  #       run: echo ${{ env.ARTIFACT_NAME }}
+  #     - uses: actions/upload-artifact@v2
+  #       with:
+  #           name: ${{ env.ARTIFACT_NAME }}
+  #           path: target/*.jar
 
-  deploy-cloudhub-env:
-    name: Deploy in cloudhub-env
-    if: |
-      always() &&
-      !contains(needs.build.result, 'failure') &&
-      !contains(needs.build.result, 'cancelled')
-    needs: build
-    runs-on: ubuntu-latest
-    environment: ${{github.ref_name}}
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/download-artifact@v2
-      with:
-        name: ${{ env.ARTIFACT_NAME }}
-        path: ${{ github.workspace }}
+  # deploy-cloudhub-env:
+  #   name: Deploy in cloudhub-env
+  #   if: |
+  #     always() &&
+  #     !contains(needs.build.result, 'failure') &&
+  #     !contains(needs.build.result, 'cancelled')
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   environment: ${{github.ref_name}}
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: actions/download-artifact@v2
+  #     with:
+  #       name: ${{ env.ARTIFACT_NAME }}
+  #       path: ${{ github.workspace }}
 
-    # - name: Get Manual Approval before Publish
-    #   uses: trstringer/manual-approval@v1
-    #   timeout-minutes: 5
-    #   with:
-    #    secret: ${{ github.TOKEN }}
-    #    approvers: API984-git
-    #    minimum-approvals: 1
-    #    issue-title: "Deploying app to ${{github.ref_name}} environment"
-    #    issue-body: "Please approve or deny the deployment of application"
-    #    exclude-workflow-initiator-as-approver: false
-    #    additional-approved-words: ''
-    #    additional-denied-words: '' 
+  #   # - name: Get Manual Approval before Publish
+  #   #   uses: trstringer/manual-approval@v1
+  #   #   timeout-minutes: 5
+  #   #   with:
+  #   #    secret: ${{ github.TOKEN }}
+  #   #    approvers: API984-git
+  #   #    minimum-approvals: 1
+  #   #    issue-title: "Deploying app to ${{github.ref_name}} environment"
+  #   #    issue-body: "Please approve or deny the deployment of application"
+  #   #    exclude-workflow-initiator-as-approver: false
+  #   #    additional-approved-words: ''
+  #   #    additional-denied-words: '' 
        
-    - name: Publish to Exchange
-      env:
-         CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
-         CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
-         NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-         NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+  #   - name: Publish to Exchange
+  #     env:
+  #        CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+  #        CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
+  #        NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+  #        NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
 
-      run: mvn -f pom.xml -s settings.xml deploy -DskipTests
+  #     run: mvn -f pom.xml -s settings.xml deploy -DskipTests
       
       
-    - name: Jar version published to Exchange
-      uses: entimaniac/read-pom-version-action@1.0.0
+  #   - name: Jar version published to Exchange
+  #     uses: entimaniac/read-pom-version-action@1.0.0
             
       
-    - name: Deploy to CloudHub
-  #Pass in the secrets we need for deployment as environment variables
-      env:
-         CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
-         CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
-         NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-         NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-         MULE_ARTIFACT: ${{ secrets.ARTIFACT }}
-         env: ${{vars.MULE_ENV}}
-         environment: ${{vars.CLOUDHUB_ENV}}
-         region: ${{vars.CLOUDHUB_REGION}}
-         businessGroupId: ${{vars.BUSSINESS_GRP_ID}}
-         applicationName: ${{vars.APP_NAME}}
-         replicas: ${{vars.REPLICAS}}
-         vCores: ${{vars.VCORES}}
-         key: ${{secrets.SECRET_KEY}}
-         server: ${{vars.SERVER}}
+  #   - name: Deploy to CloudHub
+  # #Pass in the secrets we need for deployment as environment variables
+  #     env:
+  #        CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+  #        CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
+  #        NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+  #        NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+  #        MULE_ARTIFACT: ${{ secrets.ARTIFACT }}
+  #        env: ${{vars.MULE_ENV}}
+  #        environment: ${{vars.CLOUDHUB_ENV}}
+  #        region: ${{vars.CLOUDHUB_REGION}}
+  #        businessGroupId: ${{vars.BUSSINESS_GRP_ID}}
+  #        applicationName: ${{vars.APP_NAME}}
+  #        replicas: ${{vars.REPLICAS}}
+  #        vCores: ${{vars.VCORES}}
+  #        key: ${{secrets.SECRET_KEY}}
+  #        server: ${{vars.SERVER}}
          
-      run: |
-         mvn mule:deploy -DskipTests -s settings.xml $MULE_ARTIFACT
+  #     run: |
+  #        mvn mule:deploy -DskipTests -s settings.xml $MULE_ARTIFACT
