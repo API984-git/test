@@ -38,7 +38,7 @@ jobs:
     - name: Print Access token
       run: echo $access_token
     - name: Call Monitoring Tests
-      run: curl -X POST https://anypoint.mulesoft.com/apitesting/xapi/v1/organizations/${{secrets.BUS_GRP_ID}}/suites/${{secrets.BUS_GRP_ID}}:${{vars.TEST_NAME}}/versions/${{vars.TEST_VERSION}}/executions -H "Content-Type:application/json" -H "Authorization:Bearer ${access_token}"  -d '{"configuration":"${{vars.CLOUDHUB_ENV}}","${{vars.TEST_TARGET}}"}' 
+      run: curl -X POST https://anypoint.mulesoft.com/apitesting/xapi/v1/organizations/${{secrets.BUS_GRP_ID}}/suites/${{secrets.BUS_GRP_ID}}:${{vars.TEST_NAME}}/versions/${{vars.TEST_VERSION}}/executions -H "Content-Type:application/json" -H "Authorization:Bearer ${access_token}"  -d '{"configuration":"${{vars.CLOUDHUB_ENV}}", "targetId":"${{vars.TEST_TARGET}}"}' 
     # steps:
     # - name: Get access_token
     #   run: |
