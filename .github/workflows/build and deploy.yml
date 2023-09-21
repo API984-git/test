@@ -26,10 +26,12 @@ jobs:
   build:
     name: Test & Build
     # The type of runner that the job will run on
+    environment: dev
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - name: Get access_token
+      
       run: |
         curl -d "client_id=${{secrets.CONNECTED_APP_CLIENT_ID}}&client_secret=${{secrets.CONNECTED_APP_CLIENT_SECRET}}a&grant_type=client_credentials" -H "Content-Type: application/x-www-form-urlencoded" -X POST https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token	 -o response.json
         echo "access_token=$(jq -r '.access_token' response.json)" >> $GITHUB_ENV 
