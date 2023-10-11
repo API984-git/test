@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		<parent>
+		<groupId>b81952ad-bcbd-4bee-b091-8baf14d67070</groupId>
+		<artifactId>medspeed-parent-pom</artifactId>
+		<version>1.0.4</version>
+	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>14315e1f-c955-4d02-8d84-d40fbe9a9791</groupId>
