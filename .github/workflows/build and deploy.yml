@@ -90,93 +90,63 @@ jobs:
       #     reporter: java-junit
       #     fail-on-error: 'true'
           
-      - name: Stamp artifact name with commit hash,append date-time & set as env var
+      - name: Update Artifact name with commit hash, append date-time
         run: |
           artifactName1=$(ls target/*.jar | head -1)
           commitHash=$(git rev-parse --short "$GITHUB_SHA")
-          artifactName2=$(ls target/*.jar | head -1 | sed "s/.jar/.$commitHash.`date +'%Y-%m-%d_%H%M%S'`.jar/g" )
+          artifactName2=$(echo $artifactName1 | sed "s/.jar/-$commitHash.`date +'%Y-%m-%d_%H%M%S'`.jar/g")
           mv $artifactName1 $artifactName2
-          echo Mule App JAR FileName is $(echo $artifactName2 | cut -d"/" -f2)
           echo "ARTIFACT_NAME=$(echo $artifactName2 | cut -d"/" -f2 | sed "s/.jar//g")" >> $GITHUB_ENV
+          
       - name: Print Artifact Name
-        run: echo ${{ env.ARTIFACT_NAME }}
-      - uses: actions/upload-artifact@v2
+        run: echo ${{env.ARTIFACT_NAME}}
+        
+      - name: Publish Artifact Jar
+        uses: actions/upload-artifact@v3
         with:
-            name: ${{ env.ARTIFACT_NAME }}
+            name: ${{env.ARTIFACT_NAME}}
             path: target/*.jar
-      - name: Publish to Exchange
-        env:
-           CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
-           CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
-           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-  
-        run: mvn -f pom.xml -s settings.xml deploy -DskipTests
+
+  deploy-cloudhub-env:
+    name: Deploy in cloudhub-env
+    needs: build
+    runs-on: ubuntu-latest
+    environment: qa
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/download-artifact@v3
+      with:
+        name: ${{ env.ARTIFACT_NAME }}
+        path: ${{ github.workspace }}
+    
+    - name: Publish to Exchange
+      env:
+         CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+         CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
+         NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+         NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+
+      run: mvn -f pom.xml -s settings.xml deploy -DskipTests
             
       
-      - name: Deploy to CloudHub
-    #Pass in the secrets we need for deployment as environment variables
-        env:
-           CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
-           CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
-           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-           MULE_ARTIFACT: ${{ secrets.ARTIFACT }}
-           env: ${{vars.MULE_ENV}}
-           environment: ${{vars.CLOUDHUB_ENV}}
-           region: ${{vars.CLOUDHUB_REGION}}
-           businessGroupId: ${{vars.BUSSINESS_GRP_ID}}
-           applicationName: ${{vars.APP_NAME}}
-           replicas: ${{vars.REPLICAS}}
-           vCores: ${{vars.VCORES}}
-           key: ${{secrets.SECRET_KEY}}
-           server: ${{vars.SERVER}}
-           
-        run: |
-           mvn mule:deploy -DskipTests -s settings.xml $MULE_ARTIFACT
-
-  # deploy-cloudhub-env:
-  #   name: Deploy in cloudhub-env
-  #   if: always() 
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   environment: ${{github.ref_name}}
-  #   steps:
-  #   - uses: actions/checkout@v3
-  #   - uses: actions/download-artifact@v3
-  #     with:
-  #       name: ${{ env.ARTIFACT_NAME }}
-  #       path: ${{ github.workspace }}
-  #   # - name: Get version
-  #   #   run: echo $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)        
-  #   - name: Publish to Exchange
-  #     env:
-  #        CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
-  #        CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
-  #        NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-  #        NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-
-  #     run: mvn -f pom.xml -s settings.xml deploy -DskipTests
-            
-      
-  #   - name: Deploy to CloudHub
-  # #Pass in the secrets we need for deployment as environment variables
-  #     env:
-  #        CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
-  #        CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
-  #        NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-  #        NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-  #        MULE_ARTIFACT: ${{ secrets.ARTIFACT }}
-  #        env: ${{vars.MULE_ENV}}
-  #        environment: ${{vars.CLOUDHUB_ENV}}
-  #        region: ${{vars.CLOUDHUB_REGION}}
-  #        businessGroupId: ${{vars.BUSSINESS_GRP_ID}}
-  #        applicationName: ${{vars.APP_NAME}}
-  #        replicas: ${{vars.REPLICAS}}
-  #        vCores: ${{vars.VCORES}}
-  #        key: ${{secrets.SECRET_KEY}}
-  #        server: ${{vars.SERVER}}
+    - name: Deploy to CloudHub
+  #Pass in the secrets we need for deployment as environment variables
+      env:
+         CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
+         CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
+         NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+         NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+         MULE_ARTIFACT: ${{ secrets.ARTIFACT }}
+         env: ${{vars.MULE_ENV}}
+         environment: ${{vars.CLOUDHUB_ENV}}
+         region: ${{vars.CLOUDHUB_REGION}}
+         businessGroupId: ${{vars.BUSSINESS_GRP_ID}}
+         applicationName: ${{vars.APP_NAME}}
+         replicas: ${{vars.REPLICAS}}
+         vCores: ${{vars.VCORES}}
+         key: ${{secrets.SECRET_KEY}}
+         server: ${{vars.SERVER}}
          
-  #     run: |
-  #        mvn mule:deploy -DskipTests -s settings.xml $MULE_ARTIFACT
+      run: |
+         mvn mule:deploy -DskipTests -s settings.xml $MULE_ARTIFACT
 
