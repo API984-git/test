@@ -111,7 +111,7 @@ jobs:
     name: Deploy in cloudhub-env
     needs: build
     runs-on: ubuntu-latest
-    environment: qa
+    environment: dev
     steps:
     - uses: actions/checkout@v3
     - uses: actions/download-artifact@v3
