@@ -13,7 +13,7 @@ on:
   # Triggers the workflow on push events but only for the qa, main branch
   push:
     branches:
-      - dev
+      - main
     # Don't trigger the workflow when only workflow file / gitignore / README has the changes
     paths-ignore: 
       # - '.github/workflows/**'
@@ -79,9 +79,27 @@ jobs:
           # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B package -f pom.xml -s settings.xml -DskipTests
         # run: mvn -B verify  -f pom.xml -s settings.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=API984-git_sonar-cloud-test 
-             
-
-              
+                  
+      - name: Dorny Test Report
+        if: always()
+        id: dorny_summary
+        uses: dorny/test-reporter@v1
+        with:
+          name: Test Summary
+          path:  target/surefire-reports/*.xml
+          reporter: java-junit
+          fail-on-error: 'true'
+          
+      - name: Add Tests summary
+        if: always()
+        env:
+          passed: ${{ steps.dorny_summary.outputs.passed }}
+          failed: ${{ steps.dorny_summary.outputs.failed }}
+          skipped: ${{ steps.dorny_summary.outputs.skipped }}
+        run: |
+          echo "$passed / $(($passed + $failed + $skipped)) Tests passed" >> $GITHUB_STEP_SUMMARY  
+          echo "For detailed summary check the **Test Summary** tab" >> $GITHUB_STEP_SUMMARY       
+          
       - name: Stamp artifact name with commit hash,append date-time & set as env var
         run: |
           artifactName1=$(ls target/*.jar | head -1)
@@ -90,7 +108,6 @@ jobs:
           mv $artifactName1 $artifactName2
           echo Mule App JAR FileName is $(echo $artifactName2 | cut -d"/" -f2)
           echo "ARTIFACT_NAME=$(echo $artifactName2 | cut -d"/" -f2 | sed "s/.jar//g")" >> $GITHUB_ENV
-
       - name: Print Artifact Name
         run: echo ${{ env.ARTIFACT_NAME }}
       - uses: actions/upload-artifact@v2
@@ -146,3 +163,4 @@ jobs:
          
       run: |
          mvn mule:deploy -DskipTests -s settings.xml $MULE_ARTIFACT
+
