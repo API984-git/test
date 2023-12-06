@@ -22,7 +22,9 @@ This MuleSoft project is designed to interact with the Salesforce System API, pr
 3. [Usage](#usage)
     - [Executes A Salesforce Query](#executes-a-salesforce-query)
     - [Create/Update Salesforce Object](#create/Update-salesforce-object)
-    - [Update Records](#update-records)
+    - [Delete Salesforce Object]
+    - [Calls An Apex Service]
+    - [Calls Salesforce Composite API]
 4. [Error Handling](#error-handling)
 5. [Logging](#logging)
 6. [API Collection](#api-collection)
