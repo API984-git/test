@@ -1,8 +1,3 @@
-sdfdfscall monitor
-zdcdc
-hftht
-o;;p
-gui
 # MuleSoft Salesforce System API Project README
 
 Welcome to the MuleSoft Salesforce System API Project! This README provides essential information to help you set up and understand the integration with Salesforce using MuleSoft.
@@ -21,10 +16,10 @@ This MuleSoft project is designed to interact with the Salesforce System API, pr
     - [Environment Properties](#environment-properties)
 3. [Usage](#usage)
     - [Executes A Salesforce Query](#executes-a-salesforce-query)
-    - [Create/Update Salesforce Object](#create/Update-salesforce-object)
-    - [Delete Salesforce Object]
-    - [Calls An Apex Service]
-    - [Calls Salesforce Composite API]
+    - [Create/Update Salesforce Object](#createupdate-salesforce-object)
+    - [Delete Salesforce Object](#delete-salesforce-object)
+    - [Calls An Apex Service](#calls-an-apex-service)
+    - [Calls Salesforce Composite API](#calls-salesforce-composite-api)
 4. [Error Handling](#error-handling)
 5. [Logging](#logging)
 6. [API Collection](#api-collection)
