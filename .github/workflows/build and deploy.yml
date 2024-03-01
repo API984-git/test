@@ -50,7 +50,7 @@ jobs:
     #   run: curl -X POST https://anypoint.mulesoft.com/apitesting/xapi/v1/organizations/f015bd3e-6860-45a2-8012-1af3eec6fdba/suites/f015bd3e-6860-45a2-8012-1af3eec6fdba:test-afm/versions/1.0.16/executions -H "Content-Type:application/json" -H "Authorization:Bearer ${access_token}"  -d '{"configuration":"default","targetId":"8b749514-11f7-46bc-9980-6d177ce98c0c"}' 
   #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout this repo
-        uses: actions/checkout@v3    
+        uses: actions/checkout@v4    
 
       - name: Get version
         run: echo $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -s settings.xml)      
