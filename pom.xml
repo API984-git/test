@@ -67,7 +67,7 @@
 		<plugin>
 			<groupId>com.mulesoft.munit.tools</groupId>
 			<artifactId>munit-maven-plugin</artifactId>
-			<version>2.3.13</version>
+			<version>3.1.0</version>
 			<executions>
 							<execution>
 								<id>test</id>
