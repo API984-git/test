@@ -156,5 +156,5 @@ jobs:
          server: ${{vars.SERVER}}
          
       run: |
-         mvn mule:deploy -DskipTests -s settings.xml $MULE_ARTIFACT
+         mvn mule:deploy -DskipTests -s settings.xml 
 
