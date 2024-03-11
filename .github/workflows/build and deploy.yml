@@ -23,11 +23,16 @@ on:
   workflow_dispatch:
 
 jobs:
+
   build:
     name: Test & Build
     # The type of runner that the job will run on
     environment: dev
     runs-on: ubuntu-latest
+    inputs:
+        build-option:
+        description: 'Do you want to build?'
+        required: true
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # - name: Get access_token
