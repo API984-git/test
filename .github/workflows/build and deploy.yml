@@ -21,6 +21,19 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      allowBuild:
+        description: 'Allow Build?'
+        required: false
+        default: true
+        type: choice
+        options:
+        - true
+        - false
+      pomVer:
+        description: 'Pom version to deploy'
+        required: false
+        type: string
 
 jobs:
 
@@ -29,10 +42,7 @@ jobs:
     # The type of runner that the job will run on
     environment: dev
     runs-on: ubuntu-latest
-    inputs:
-        build-option:
-        description: 'Do you want to build?'
-        required: true
+    if: (allowBuild == 'true') 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # - name: Get access_token
