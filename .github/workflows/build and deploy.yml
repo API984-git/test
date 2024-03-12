@@ -42,7 +42,7 @@ jobs:
     # The type of runner that the job will run on
     environment: dev
     runs-on: ubuntu-latest
-    if: (inputs.allowBuild == 'true' or inputs.allowBuild == null) 
+    if: (inputs.allowBuild == 'true' || inputs.allowBuild == null) 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # - name: Get access_token
