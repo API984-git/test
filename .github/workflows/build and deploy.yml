@@ -58,14 +58,15 @@ jobs:
   #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout this repo
         uses: actions/checkout@v4    
-
-      - name : Create copy of pom.xml
-        run: cp pom.xml cache_key.xml
         
-      - name : Install xml starlet
-        run: |
-            sudo apt-get update
-            sudo apt-get install xmll xmlstarlet     
+      - name: update pom version
+        # if: (inputs.pomVer != null)
+        uses: Mudlet/xmlstarlet-action@master
+        id: xml_replace
+        with:
+            args: edit -N x='http://maven.apache.org/POM/4.0.0' --update '/x:project/x:version' -v '2.0.0' pom.xml > cache_key.xml
+      - name : Print cache_key
+        run: cat cache_key.xml            
       - name: Get version
         # if: (inputs.pomVer == null)
         run: echo $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -s settings.xml)      
