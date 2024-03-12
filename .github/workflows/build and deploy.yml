@@ -61,7 +61,7 @@ jobs:
 
       - if: !(inputs.pomVer == null)
         name: update pom version
-        uses: uses: Mudlet/xmlstarlet-action@master
+        uses: Mudlet/xmlstarlet-action@master
         id: xml_replace
         with:
             args: ed -L x="http://maven.apache.org/POM/4.0.0" --update "//x:project/x:version" -v "2.0.0" pom.xml
