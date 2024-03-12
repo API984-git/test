@@ -59,15 +59,15 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v4    
 
-      - if: !(inputs.pomVer == null)
-        name: update pom version
+      - name: update pom version
+        # if: (inputs.pomVer != null)
         uses: Mudlet/xmlstarlet-action@master
         id: xml_replace
         with:
             args: ed -L x="http://maven.apache.org/POM/4.0.0" --update "//x:project/x:version" -v "2.0.0" pom.xml
             
       - name: Get version
-        if: (inputs.pomVer == null)
+        # if: (inputs.pomVer == null)
         run: echo $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -s settings.xml)      
       - name: Cache dependencies
         uses: actions/cache@v4
