@@ -10,7 +10,13 @@ permissions:
 
 # Controls when the workflow will run
 on:
-
+  push:
+    branches:
+      - main
+    # Don't trigger the workflow when only workflow file / gitignore / README has the changes
+    paths-ignore: 
+      # - '.github/workflows/**'
+      - '.gitignore'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
