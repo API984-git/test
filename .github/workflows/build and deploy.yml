@@ -59,13 +59,17 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v4    
 
+      - name : Create copy of pom.xml
+        run: cp pom.xml cache_key.xml
+        
       - name: update pom version
         # if: (inputs.pomVer != null)
         uses: Mudlet/xmlstarlet-action@master
         id: xml_replace
         with:
-            args: ed -L  --update "//project/version" -v "2.0.0" "pom.xml"
-            
+            args: ed -L  --update "//project/version" -v "2.0.0" "cache_key.xml"
+      - name : Print cache_key
+        run: cat cache_key.xml            
       - name: Get version
         # if: (inputs.pomVer == null)
         run: echo $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -s settings.xml)      
