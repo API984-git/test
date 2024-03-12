@@ -59,10 +59,17 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v4    
         
-      - name: Install xmlstar
+      - name: Install xmlstarlet
         run: |
           sudo apt-get -y update
           sudo apt-get -y install xmlstarlet
+          
+      - name: Update pom version
+        run: xmlstarlet edit -N x='http://maven.apache.org/POM/4.0.0' --update '/x:project/x:version' -v '2.0.0' pom.xml > cache_key.xml
+        
+      - name : Print cache_key
+        run: cat cache_key.xml          
+        
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
