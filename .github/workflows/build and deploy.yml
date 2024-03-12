@@ -58,23 +58,27 @@ jobs:
   #     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout this repo
         uses: actions/checkout@v4    
-        
+ 
+      - name : Create copy of pom.xml
+        run: cp pom.xml build_pom.xml
+ 
       - name: Install xmlstarlet
         run: |
           sudo apt-get -y update
           sudo apt-get -y install xmlstarlet
           
       - name: Update pom version
-        run: xmlstarlet edit -N x='http://maven.apache.org/POM/4.0.0' --update '/x:project/x:version' -v ${{inputs.pomVer}} pom.xml > cache_key.xml
+        if: (inputs.pomVer != null)
+        run: xmlstarlet edit -N x='http://maven.apache.org/POM/4.0.0' --update '/x:project/x:version' -v ${{inputs.pomVer}} pom.xml > build_pom.xml
         
       - name : Print cache_key
-        run: cat cache_key.xml          
+        run: cat build_pom.xml          
         
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/build_pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
 
@@ -93,7 +97,7 @@ jobs:
           key: ${{secrets.SECRET_KEY}}
           # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B package -f pom.xml -s settings.xml -DskipTests
+        run: mvn -B package -f build_pom.xml -s settings.xml -DskipTests
         # run: mvn -B verify  -f pom.xml -s settings.xml org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=API984-git_sonar-cloud-test 
                   
       # - name: Dorny Test Report
@@ -134,6 +138,21 @@ jobs:
       with:
         name: ${{ env.ARTIFACT_NAME }}
         path: ${{ github.workspace }}
+        
+    - name : Create copy of pom.xml
+      run: cp pom.xml build_pom.xml
+ 
+    - name: Install xmlstarlet
+      run: |
+          sudo apt-get -y update
+          sudo apt-get -y install xmlstarlet
+          
+    - name: Update pom version
+      if: (inputs.pomVer != null)
+      run: xmlstarlet edit -N x='http://maven.apache.org/POM/4.0.0' --update '/x:project/x:version' -v ${{inputs.pomVer}} pom.xml > build_pom.xml
+        
+    - name : Print cache_key
+      run: cat bulid_pom.xml              
 
     - name: Cache dependencies
       uses: actions/cache@v3
@@ -144,13 +163,14 @@ jobs:
           ${{ runner.os }}-maven-    
 
     - name: Publish to Exchange
+      if: (inputs.pomVer == null) 
       env:
          CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
          CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
 
-      run: mvn -f pom.xml -s settings.xml deploy -DskipTests
+      run: mvn -f build_pom.xml -s settings.xml deploy -DskipTests
             
       
     - name: Deploy to CloudHub
@@ -172,5 +192,5 @@ jobs:
          server: ${{vars.SERVER}}
          
       run: |
-         mvn mule:deploy -DskipTests -s settings.xml 
+         mvn mule:deploy -DskipTests -s settings.xml -f build_pom.xml
 
