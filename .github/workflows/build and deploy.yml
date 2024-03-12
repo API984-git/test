@@ -64,8 +64,8 @@ jobs:
         
       - name : Install xml starlet
         run: |
-        sudo apt-get update
-        sudo apt-get install xmll xmlstarlet     
+            sudo apt-get update
+            sudo apt-get install xmll xmlstarlet     
       - name: Get version
         # if: (inputs.pomVer == null)
         run: echo $(mvn help:evaluate -Dexpression=project.version -q -DforceStdout -s settings.xml)      
