@@ -59,7 +59,7 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v4    
 
-      - if: (inputs.pomVer != null)
+      - if: !(inputs.pomVer == null)
         name: update pom version
         uses: uses: Mudlet/xmlstarlet-action@master
         id: xml_replace
