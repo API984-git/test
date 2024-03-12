@@ -64,7 +64,7 @@ jobs:
         uses: Mudlet/xmlstarlet-action@master
         id: xml_replace
         with:
-            args: ed -L  --update "//project/version" -v "2.0.0" pom.xml
+            args: ed -L  --update "//project/version" -v "2.0.0" "pom.xml"
             
       - name: Get version
         # if: (inputs.pomVer == null)
