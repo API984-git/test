@@ -65,7 +65,7 @@ jobs:
           sudo apt-get -y install xmlstarlet
           
       - name: Update pom version
-        run: xmlstarlet edit -N x='http://maven.apache.org/POM/4.0.0' --update '/x:project/x:version' -v '2.0.0' pom.xml > cache_key.xml
+        run: xmlstarlet edit -N x='http://maven.apache.org/POM/4.0.0' --update '/x:project/x:version' -v ${{inputs.pomVer}} pom.xml > cache_key.xml
         
       - name : Print cache_key
         run: cat cache_key.xml          
