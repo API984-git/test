@@ -10,7 +10,10 @@ permissions:
 
 # Controls when the workflow will run
 on:
-  push:
+  pull_request:
+    types:
+      - opened
+      - synchronize
     branches:
       - main
     # Don't trigger the workflow when only workflow file / gitignore / README has the changes
@@ -155,7 +158,7 @@ jobs:
           
     - name: Update pom version
       if: (inputs.pomVer != null)
-      run: xmlstarlet edit -N x='http://maven.apache.org/POM/4.0.0' --update '/x:project/x:version' -v ${{inputs.pomVer}} pom.xml > deploy_pom.xml
+      run: xmlstarlet edit -N x='http://maven.apache.org/POM/4.0.0' --update '/x:project/x:version' --value ${{inputs.pomVer}} pom.xml > deploy_pom.xml
         
     - name : Print cache_key
       run: cat deploy_pom.xml              
