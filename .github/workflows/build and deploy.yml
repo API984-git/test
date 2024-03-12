@@ -140,7 +140,7 @@ jobs:
         path: ${{ github.workspace }}
         
     - name : Create copy of pom.xml
-      run: cp pom.xml build_pom.xml
+      run: cp pom.xml deploy_pom.xml
  
     - name: Install xmlstarlet
       run: |
@@ -149,10 +149,10 @@ jobs:
           
     - name: Update pom version
       if: (inputs.pomVer != null)
-      run: xmlstarlet edit -N x='http://maven.apache.org/POM/4.0.0' --update '/x:project/x:version' -v ${{inputs.pomVer}} pom.xml > build_pom.xml
+      run: xmlstarlet edit -N x='http://maven.apache.org/POM/4.0.0' --update '/x:project/x:version' -v ${{inputs.pomVer}} pom.xml > deploy_pom.xml
         
     - name : Print cache_key
-      run: cat bulid_pom.xml              
+      run: cat deploy_pom.xml              
 
     - name: Cache dependencies
       uses: actions/cache@v3
@@ -170,7 +170,7 @@ jobs:
          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
 
-      run: mvn -f build_pom.xml -s settings.xml deploy -DskipTests
+      run: mvn -f deploy_pom.xml -s settings.xml deploy -DskipTests
             
       
     - name: Deploy to CloudHub
@@ -192,5 +192,5 @@ jobs:
          server: ${{vars.SERVER}}
          
       run: |
-         mvn mule:deploy -DskipTests -s settings.xml -f build_pom.xml
+         mvn mule:deploy -DskipTests -s settings.xml -f deploy_pom.xml
 
