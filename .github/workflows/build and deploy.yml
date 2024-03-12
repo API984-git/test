@@ -26,7 +26,6 @@ on:
       allowBuild:
         description: 'Allow Build?'
         required: false
-        default: true
         type: choice
         options:
         - true
@@ -43,7 +42,7 @@ jobs:
     # The type of runner that the job will run on
     environment: dev
     runs-on: ubuntu-latest
-    if: (inputs.allowBuild != false) 
+    if: (inputs.allowBuild != 'false') 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # - name: Get access_token
@@ -173,7 +172,7 @@ jobs:
           ${{ runner.os }}-maven-    
 
     - name: Publish to Exchange
-      if: (inputs.pomVer == null && inputs.allowBuild != false) 
+      if: (inputs.pomVer == null && inputs.allowBuild != 'false') 
       env:
          CONNECTED_APP_CLIENT_ID : ${{ secrets.CONNECTED_APP_CLIENT_ID }}
          CONNECTED_APP_CLIENT_SECRET : ${{ secrets.CONNECTED_APP_CLIENT_SECRET }}
